@@ -1,4 +1,6 @@
 import logging
+logging.basicConfig(level=logging.INFO)
+
 '''
 class report generator will generate  the yearly, monthly  reports
 And can generate charts based on the command.

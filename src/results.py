@@ -1,3 +1,10 @@
+import logging
+logging.basicConfig(level=logging.INFO)
+
+"""
+called from calculate.py
+"""
+
 class YearlyResult:
     def __init__(
         self,
