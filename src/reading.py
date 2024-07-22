@@ -1,3 +1,9 @@
+import logging
+logging.basicConfig(level=logging.INFO)
+
+"""
+data: storing max_temp, min_temp and humidity 
+"""
 class WeatherReading:
     def __init__(self, data):
         self.date = data[0]

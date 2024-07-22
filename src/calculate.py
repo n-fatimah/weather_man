@@ -1,7 +1,8 @@
+import logging
 from collections import defaultdict
 from results import YearlyResult, MonthlyResult, ChartData
 
-
+logging.basicConfig(level=logging.INFO)
 class Computations:
     def __init__(self, readings):
         self.readings = readings
@@ -65,9 +66,9 @@ class Computations:
         if month:
             year=month.split("/")[0]
             m=month.split("/")[1]
- 
+
             year_month_combination=year+'-'+m
-       
+
 
         for reading in self.readings:
             if reading.date.startswith(year_month_combination):
@@ -89,9 +90,9 @@ class Computations:
     Generates  chart
     """
     def generate_chart_data(self, month):
-     
+
         chart_data = defaultdict(list)
-      
+
 
         if month:
             year=month.split("/")[0]
@@ -104,5 +105,5 @@ class Computations:
                 day = reading.date.split("-")[-1]
                 chart_data[day].append(reading.max_temp)
                 chart_data[day].append(reading.min_temp)
-        print("done with chart data")
+        logging.info("done with chart data")
         return ChartData(chart_data)
