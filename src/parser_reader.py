@@ -1,8 +1,9 @@
-
-import os
 import logging
+import os
 from typing import List
+
 from reading import WeatherReading
+
 
 class ParserReader:
     def __init__(self, path: str):
@@ -26,12 +27,16 @@ class ParserReader:
             full_file_name = os.path.join(self.path, file_name)
             if os.path.isfile(full_file_name):
                 with open(full_file_name, "r") as file:
-                    next(file)  # Skip header
-                    for line in file:
-                        data = line.strip().split(",")
-                        reading = WeatherReading(data)
-                        readings.append(reading)
-                        
+                    next(file)
+                    readings = [WeatherReading(line.strip().split(",")) for line in file]
 
         logging.info(f"Files parsed successfully")
         return readings
+
+
+    """
+    The function to format the Weatherreading Object to verify output 
+    """
+    def format_weather_reading(reading: WeatherReading) -> str:
+        return (f"Date: {reading.date}, Max Temp: {reading.max_temp}C, "
+                f"Min Temp: {reading.min_temp}C, Humidity: {reading.humidity}%")

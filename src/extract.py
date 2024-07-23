@@ -1,22 +1,22 @@
-
 import logging
 import os
 import shutil
-
 from enum import Enum
+
 
 class File_Prefix(Enum):
     MURREE_WEATHER = "Murree_weather_"
+
 
 class Extractor:
     """
     Args: path and year
     """
+
     def __init__(self, path, year):
         self.path = path
         self.year = year
         self.destination = "extracted_files"
-
 
     """
     Extracts and copies weather data files from the source directory to the destination directory.
@@ -46,7 +46,5 @@ class Extractor:
                     shutil.copy(full_file_name, self.destination)
 
         logging.info(f"Files extracted to {self.destination}")
-        
+
         return
-
-

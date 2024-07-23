@@ -1,11 +1,14 @@
-from typing import List, Dict
 from collections import defaultdict
-from reading import WeatherReading
 from datetime import datetime
+from typing import Dict, List
+
+from reading import WeatherReading
+
 
 class YearlyComputations:
     def __init__(self, readings: List[WeatherReading]):
         self.readings = readings
+
     """
     Computes the highest temperature, lowest temperature, and  humidity for a given year.
 
@@ -22,7 +25,6 @@ class YearlyComputations:
     Returns:
         Dict[str, str]: A dictionary with formatted strings for the highest temperature, lowest temperature, and highest humidity.
     """
-
 
     def compute_yearly(self, year: str) -> Dict[str, str]:
         highest_temp = float("-inf")
@@ -44,23 +46,37 @@ class YearlyComputations:
                     highest_humidity = reading.humidity
                     highest_humidity_date = reading.date
 
-        highest_temp_date_str = datetime.strptime(highest_temp_date, '%Y-%m-%d').strftime('%B %d') if highest_temp_date else None
-        lowest_temp_date_str = datetime.strptime(lowest_temp_date, '%Y-%m-%d').strftime('%B %d') if lowest_temp_date else None
-        highest_humidity_date_str = datetime.strptime(highest_humidity_date, '%Y-%m-%d').strftime('%B %d') if highest_humidity_date else None
+        highest_temp_date_str = (
+            datetime.strptime(highest_temp_date, "%Y-%m-%d").strftime("%B %d")
+            if highest_temp_date
+            else None
+        )
+        lowest_temp_date_str = (
+            datetime.strptime(lowest_temp_date, "%Y-%m-%d").strftime("%B %d")
+            if lowest_temp_date
+            else None
+        )
+        highest_humidity_date_str = (
+            datetime.strptime(highest_humidity_date, "%Y-%m-%d").strftime("%B %d")
+            if highest_humidity_date
+            else None
+        )
 
         result = {
             "highest_temp": f"Highest: {highest_temp}C on {highest_temp_date_str}",
             "lowest_temp": f"Lowest: {lowest_temp}C on {lowest_temp_date_str}",
-            "highest_humidity": f"Humidity: {highest_humidity}% on {highest_humidity_date_str}"
+            "highest_humidity": f"Humidity: {highest_humidity}% on {highest_humidity_date_str}",
         }
 
         [print(value) for value in result.values()]
 
         return result
 
+
 class MonthlyComputations:
     def __init__(self, readings: List[WeatherReading]):
         self.readings = readings
+
     """
     Computes the average maximum temperature, average minimum temperature, and average humidity for a specified month.
 
@@ -77,7 +93,7 @@ class MonthlyComputations:
         Dict[str, str]: A dictionary with formatted strings for the average maximum temperature, average minimum temperature, and average humidity.
     """
 
-    def compute_monthly(self, month: str) -> Dict[str, int]:
+    def compute_monthly(self, month: str) -> Dict[str, str]:
         total_max_temp = 0
         total_min_temp = 0
         total_humidity = 0
@@ -102,15 +118,16 @@ class MonthlyComputations:
                 "avg_min_temp": 0,
                 "avg_humidity": 0
             }
-
-        result = {
-            "avg_max_temp": f"Highest Average {total_max_temp // count}C",
-            "avg_min_temp": f"Lowest AVerage {total_min_temp // count}C",
-            "avg_humidity": f"Average Humidity {total_humidity // count}%",
-        }
+        else:
+            result = {
+                "avg_max_temp": f"Highest Average {total_max_temp // count}C",
+                "avg_min_temp": f"Lowest AVerage {total_min_temp // count}C",
+                "avg_humidity": f"Average Humidity {total_humidity // count}%",
+            }
 
         [print(value) for value in result.values()]
         return result
+
 
 class ChartDataGeneration:
     def __init__(self, readings: List[WeatherReading]):
@@ -129,25 +146,26 @@ class ChartDataGeneration:
     Returns:
         Dict[str, List[int]]: A dictionary where the keys are days of the month and the values are lists containing the maximum and minimum temperatures recorded on that day.
     """
+
     def generate_chart_data(self, month: str) -> Dict[str, List[int]]:
         chart_data = defaultdict(list)
 
-        year, m = month.split("/")
-        year_month_combination = f"{year}-{m}"
+        year, month_ = month.split("/")
+        year_month_combination = f"{year}-{month_}"
 
         for reading in self.readings:
             if reading.date.startswith(year_month_combination):
                 day = reading.date.split("-")[-1]
                 chart_data[day].append(reading.max_temp)
                 chart_data[day].append(reading.min_temp)
-        print(f"{m} {year}")
         self.print_non_none_days(chart_data)
         return chart_data
+
     """
     Prints the days of the month with recorded temperature data.
 
     Prints each day along with its maximum and minimum 
-    temperatures. 
+    temperatures.
     The number of '+' characters corresponds to the maximum and minimum temperatures recorded for that day.
     Days with `None` values for temperatures are excluded from the output.
 
@@ -157,8 +175,8 @@ class ChartDataGeneration:
     Returns:
         None
     """
-    def print_non_none_days(self, chart_data: Dict[str, List[int]]):
 
+    def print_non_none_days(self, chart_data: Dict[str, List[int]]):
         for day, temps in chart_data.items():
             max_temp, min_temp = temps
             if max_temp is not None and min_temp is not None:
