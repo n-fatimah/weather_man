@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 80
+# ignore =
+exclude =
+    .env,
+    *migrations*,
+ignore = E501, W503, W605, E731, E203, E711, C901
+max-complexity = 21

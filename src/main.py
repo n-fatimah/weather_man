@@ -4,56 +4,54 @@ import os
 import sys
 from pathlib import Path
 
-from calculate import Computations
+import argument_parse
+from calculate import ChartDataGeneration, MonthlyComputations, YearlyComputations
 from extract import Extractor
 from parser_reader import ParserReader
-from report import ReportGenerator
 
 logging.basicConfig(level=logging.INFO)
-# logging.basicConfig(level=logging.error)
 
 
-"""
-argument parsing based on commands
-"""
+def main() -> None:
+    """
+    Main function to process weather data based on user input from command line arguments.
 
-
-def main():
+    Argument Parsing:
+        path: The path to the weather data files.
+        -e or --year: Year for computing yearly report.
+        -c or --month: Month for computing monthly report.
+        -a or --chart: Month for generating chart data.
+    Returns:
+        None
+    """
     parser = argparse.ArgumentParser(description="Weather Man")
-    parser.add_argument("path")
+    parser.add_argument("path", type=str)
     parser.add_argument("-e", "--year")
     parser.add_argument("-c", "--month")
     parser.add_argument("-a", "--chart")
 
     args = parser.parse_args()
-    logging.info(args.year)
-    logging.info(args.month)
-    logging.info(args.chart)
+    logging.info(type(args.year))
+    logging.info(type(args.month))
+    logging.info(type(args.chart))
 
-    if args.year is None and args.month is None and args.chart is None:
+    if not args.year and not args.month and not args.chart:
         logging.error("Command does not include year month or chart instructions")
         sys.exit(1)
 
     if args.year:
         year = int(args.year)
+        logging.info(f"The year for this query is {year}")
 
     if args.month:
-        year=int(args.month.split("/")[0])
-        month=int(args.month.split("/")[1])
-        logging.info(month,year)
+        year, month = argument_parse.validate_month_year(args.month)
+        print(year, month)
 
     if args.chart:
-        year=int(args.chart.split("/")[0])
-        month=int(args.chart.split("/")[1])
-        logging.info(month,year)
-
-
-
+        year, month = argument_parse.validate_month_year(args.chart)
 
     file_root = str(Path(__file__).resolve().parent.parent)
-
     full_path = os.path.join(file_root, args.path)
-    logging.info(f"full path path {full_path}")
 
     extractor = Extractor(full_path, year)
     extractor.extract_files()
@@ -61,20 +59,20 @@ def main():
     weather_parser = ParserReader(extractor.destination)
     readings = weather_parser.parse_files()
 
-    computations = Computations(readings)
-    report_generator = ReportGenerator()
+    if args.month:
+        computations = MonthlyComputations(readings)
+        result = computations.compute_monthly(args.month)
+        computations.print_monthly_report(result)
+
+    if args.chart:
+        chart_gen = ChartDataGeneration(readings)
+        chart_gen.generate_chart_data(args.chart)
 
     if args.year:
-        result = computations.compute_yearly(args.year)
-        report_generator.generate_yearly_report(result)
-    if args.month:
-        result = computations.compute_monthly(args.month)
-        report_generator.generate_monthly_report(result)
-    if args.chart:
-        chart_data = computations.generate_chart_data(args.chart)
-        report_generator.generate_chart(chart_data)
+        yearly_computations = YearlyComputations(readings)
+        result = yearly_computations.compute_yearly(args.year)
+        yearly_computations.print_yearly_report(result)
 
 
 if __name__ == "__main__":
-    logging.info("Program is starting")
     main()

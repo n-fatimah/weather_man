@@ -1,28 +1,40 @@
-import os
 import logging
+import os
+from typing import List
+
 from reading import WeatherReading
-logging.basicConfig(level=logging.INFO)
 
 
 class ParserReader:
-    def __init__(self, path):
+    def __init__(self, path: str):
         self.path = path
+
+    def parse_files(self) -> List[WeatherReading]:
         """
-        path: destination path of extracted files 
+        Description: Parses weather data files.
+
+        Returns:
+            List[WeatherReading]: A list of `WeatherReading` objects created from the parsed files.
+
         """
-    def parse_files(self):
         readings = []
         for file_name in os.listdir(self.path):
-            logging.info('filename', file_name)
             full_file_name = os.path.join(self.path, file_name)
-            logging.info("full file name",full_file_name)
             if os.path.isfile(full_file_name):
                 with open(full_file_name, "r") as file:
                     next(file)
-                    for line in file:
-                        data = line.strip().split(",")
-                        readings.append(WeatherReading(data))
+                    readings = [
+                        WeatherReading(line.strip().split(",")) for line in file
+                    ]
 
         logging.info("Files parsed successfully")
-
         return readings
+
+    def format_weather_reading(reading: WeatherReading) -> str:
+        """
+        The function to format the Weather reading Object to verify output
+        """
+        return (
+            f"Date: {reading.date}, Max Temp: {reading.max_temp}C, "
+            f"Min Temp: {reading.min_temp}C, Humidity: {reading.humidity}%"
+        )
