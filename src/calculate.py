@@ -2,8 +2,9 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List
 
-from reading import WeatherReading
 
+from reading import WeatherReading
+import formatDate
 
 class YearlyComputations:
     def __init__(self, readings: List[WeatherReading]):
@@ -38,9 +39,9 @@ class YearlyComputations:
                     highest_humidity = reading.humidity
                     highest_humidity_date = reading.date
 
-        highest_temp_date_str = self.format_date(highest_temp_date)
-        lowest_temp_date_str = self.format_date(lowest_temp_date)
-        highest_humidity_date_str = self.format_date(highest_humidity_date)
+        highest_temp_date_str = formatDate.format_date(highest_temp_date)
+        lowest_temp_date_str = formatDate.format_date(lowest_temp_date)
+        highest_humidity_date_str = formatDate.format_date(highest_humidity_date)
 
         result = {
             "highest_temp": f"Highest: {highest_temp}C on {highest_temp_date_str}",
@@ -50,21 +51,14 @@ class YearlyComputations:
 
         return result
 
-    def print_yearly_report(self, result):
+    def print_yearly_report(self, result : Dict[str, str]):
+        """
+        Description: To print the yearly report
+        Argument: result
+
+        """
         [print(value) for value in result.values()]
 
-    def format_date(self, temp_date):
-        """
-        Formats the date string to 'Month Day' format.
-
-        Args:
-            date_str
-
-        The formatted date string or None if date_str is None.
-        """
-        if temp_date:
-            return datetime.strptime(temp_date, "%Y-%m-%d").strftime("%B %d")
-        return None
 
 
 class MonthlyComputations:
@@ -109,7 +103,7 @@ class MonthlyComputations:
 
         return result
 
-    def print_monthly_report(self, result):
+    def print_monthly_report(self, result : Dict[str, str]):
         """
         Description: print the dict returned from compute_monthly
 
@@ -143,8 +137,7 @@ class ChartDataGeneration:
                 day = reading.date.split("-")[-1]
                 chart_data[day].append(reading.max_temp)
                 chart_data[day].append(reading.min_temp)
-        # self.print_non_none_days(chart_data)
-        return chart_data
+        return self.print_non_none_days(chart_data)
 
     """
     Description: Prints the days of the month with recorded temperature data.
@@ -162,3 +155,4 @@ class ChartDataGeneration:
             if max_temp is not None and min_temp is not None:
                 print(f"{day} {'+'*int(max_temp)} {max_temp}C")
                 print(f"{day} {'+'*int(min_temp)} {min_temp}C")
+

@@ -66,8 +66,7 @@ def main() -> None:
 
     if args.chart:
         chart_gen = ChartDataGeneration(readings)
-        chart_data = chart_gen.generate_chart_data(args.chart)
-        chart_gen.print_non_none_days(chart_data)
+        chart_gen.generate_chart_data(args.chart)
 
     if args.year:
         yearly_computations = YearlyComputations(readings)
