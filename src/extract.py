@@ -1,38 +1,27 @@
 import logging
 import os
 import shutil
-from enum import Enum
 
-
-class File_Prefix(Enum):
-    MURREE_WEATHER = "Murree_weather_"
+from enums import File_Destination, File_Prefix
 
 
 class Extractor:
     """
-    Args: path and year
+    Arguments: path and year
     """
 
     def __init__(self, path, year):
         self.path = path
         self.year = year
-        self.destination = "extracted_files"
-
-    """
-    Extracts and copies weather data files from the source directory to the destination directory.
-
-     If the destination directory already exists, it is removed using shutil.rmtree.
-     A new empty destination directory is created using os.makedirs.
-
-    Iterates over the files in the source directory (`self.path`).
-    Filters files based on a prefix (`File_Prefix.MURREE_WEATHER.value`) and the specified year (`self.year`).
-    Copies the filtered files to the destination directory (`self.destination`) using `shutil.copy`.
-
-    Returns:
-        None
-    """
+        self.destination = File_Destination.Extract_Files.value
 
     def extract_files(self):
+        """
+        Description: Extracts and copies weather data files from the source directory to the destination directory.
+
+        Returns:
+            None
+        """
 
         if os.path.exists(self.destination):
             shutil.rmtree(self.destination)
@@ -46,5 +35,3 @@ class Extractor:
                     shutil.copy(full_file_name, self.destination)
 
         logging.info(f"Files extracted to {self.destination}")
-
-        return
